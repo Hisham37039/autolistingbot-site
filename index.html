@@ -108,7 +108,70 @@
   }
   .hero-meta strong{color:var(--ink);font-weight:500;display:block;margin-top:4px;font-size:13px}
 
-  /* ─── Hero terminal preview ─── */
+  /* ─── Hero login-screen mock ─── */
+  .hero-mock{
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.9),0 0 0 1px var(--line),0 0 60px -20px var(--accent-glow);
+  }
+  .hero-mock-bar{
+    background:#080b0e;padding:10px 14px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:8px;
+  }
+  .hero-mock-title{
+    margin-left:auto;color:var(--muted);font-size:11px;
+    font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .hero-mock-screen{
+    background:linear-gradient(135deg,#1877F2 0%,#0f5fcf 55%,#0a3d9e 100%);
+    padding:36px 28px;
+    display:flex;flex-direction:column;align-items:center;gap:14px;
+  }
+  .hero-mock-screen .mock-robot{
+    width:74px;height:74px;border-radius:50%;
+    background:rgba(255,255,255,0.18);
+    display:flex;align-items:center;justify-content:center;font-size:38px;
+  }
+  .hero-mock-screen .mock-title{color:#fff;font-weight:800;font-size:22px;letter-spacing:-.01em}
+  .hero-mock-screen .mock-subtitle{color:rgba(255,255,255,.78);font-size:12px;margin-top:-10px;font-weight:500}
+  .hero-mock-screen .mock-box{
+    background:#fff;border-radius:12px;padding:22px;
+    width:100%;max-width:340px;
+    display:flex;flex-direction:column;gap:10px;
+    box-shadow:0 10px 30px -10px rgba(0,0,0,0.4);
+  }
+  .hero-mock-screen .mock-label{color:#222;font-weight:700;text-align:center;font-size:15px}
+  .hero-mock-screen .mock-subtle{color:#888;text-align:center;font-size:11px;margin-top:-4px;margin-bottom:4px}
+  .hero-mock-screen .mock-input{
+    background:#f5f5f7;border:1px solid #e5e5e8;border-radius:8px;
+    padding:12px;text-align:center;
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:#999;letter-spacing:.12em;font-weight:600;
+  }
+  .hero-mock-screen .mock-btn{
+    background:#1877F2;color:#fff;padding:12px;border-radius:8px;
+    text-align:center;font-weight:700;font-size:13px;
+  }
+  .hero-mock-screen .mock-plans{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+    width:100%;max-width:340px;
+  }
+  .hero-mock-screen .mock-plan{
+    background:rgba(255,255,255,.95);
+    padding:10px 8px;border-radius:8px;text-align:center;color:#333;
+    display:flex;flex-direction:column;gap:2px;
+  }
+  .hero-mock-screen .mock-plan b{font-size:12px;font-weight:700}
+  .hero-mock-screen .mock-plan span{font-size:10px;color:#666}
+  .hero-mock-screen .mock-help{
+    margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:8px;
+    color:rgba(255,255,255,.9);font-size:11px;
+  }
+  .hero-mock-screen .mock-wa{
+    background:#25D366;color:#fff;padding:8px 16px;border-radius:6px;
+    font-weight:700;font-size:12px;
+  }
+
+  /* ─── Terminal (kept for any reuse, hidden if unused) ─── */
   .terminal{
     background:var(--panel);border:1px solid var(--line-strong);border-radius:8px;
     overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:13px;
@@ -284,7 +347,7 @@
   </div>
   <div class="status-right">
     <span>WINDOWS X64</span>
-    <span>SIZE <span>103 MB</span></span>
+    <span>SIZE <span>104 MB</span></span>
     <span>UPDATED <span id="date">JUN 2026</span></span>
   </div>
 </div>
@@ -298,8 +361,7 @@
         <div>
           <div class="eyebrow">● Marketplace Automation · Desktop App</div>
           <h1>
-            Post listings <span class="underline">while you sleep</span>.<br/>
-            <span class="fade">Skip the copy-paste grind.</span>
+            Post listings <span class="underline">while you rest</span>.
           </h1>
           <p class="lede">Auto Listing Bot runs on your Windows PC, pushes listings to Facebook Marketplace across multiple cities and accounts, and handles the repetitive setup so you can focus on selling.</p>
           <div class="cta-row">
@@ -317,25 +379,34 @@
           </div>
         </div>
 
-        <!-- Terminal preview -->
-        <div class="terminal" aria-hidden="true">
-          <div class="terminal-bar">
+        <!-- Login screen mock -->
+        <div class="hero-mock" aria-hidden="true">
+          <div class="hero-mock-bar">
             <span class="tdot r"></span>
             <span class="tdot y"></span>
             <span class="tdot g"></span>
-            <span class="terminal-title">auto-listing-bot · run</span>
+            <span class="hero-mock-title">Auto Listing Bot</span>
           </div>
-          <div class="terminal-body">
-            <div><span class="prompt">$</span> launch auto-listing-bot.exe</div>
-            <div class="dim">→ verifying license key...</div>
-            <div><span class="ok">✓</span> FBBOT-2024-GOLD-7X9K <span class="dim">· Gold · 24d</span></div>
-            <div class="dim">→ loading 3 datasets...</div>
-            <div class="dim">→ opening 5 tabs in parallel...</div>
-            <div><span class="ok">✓</span> Tab 01 → posted “iPhone 14 Pro” · Chicago</div>
-            <div><span class="ok">✓</span> Tab 02 → posted “MacBook Air M2” · NYC</div>
-            <div><span class="ok">✓</span> Tab 03 → posted “Sony A7 III” · Miami</div>
-            <div class="dim">→ rotating city · waiting 12s...</div>
-            <div><span class="arrow-line">▸</span> Live log streaming<span class="cursor"></span></div>
+          <div class="hero-mock-screen">
+            <div class="mock-robot">🤖</div>
+            <div class="mock-title">Auto Listing</div>
+            <div class="mock-subtitle">Auto Listing Bot</div>
+            <div class="mock-box">
+              <div class="mock-label">Enter License Key</div>
+              <div class="mock-subtle">Activate your subscription to continue</div>
+              <div class="mock-input">FBBOT-XXXX-XXXX-XXXX</div>
+              <div class="mock-btn">🔒 Activate Bot</div>
+            </div>
+            <div class="mock-plans">
+              <div class="mock-plan"><b>🎟 Demo</b><span>12h + proxy</span></div>
+              <div class="mock-plan"><b>🥈 Silver</b><span>1 mo, no proxy</span></div>
+              <div class="mock-plan"><b>🥇 Gold</b><span>1 mo + proxy</span></div>
+              <div class="mock-plan"><b>🏆 Platinum</b><span>3 mo + proxy</span></div>
+            </div>
+            <div class="mock-help">
+              <span>🔑 Need a License Key?</span>
+              <div class="mock-wa">✱ WhatsApp 0325 5444103</div>
+            </div>
           </div>
         </div>
       </div>
@@ -491,7 +562,7 @@
         <div class="step">
           <div class="step-num">STEP 01</div>
           <h4>Download the .exe</h4>
-          <p>One file, around 103 MB. No installer needed. It lives in any folder you choose.</p>
+          <p>One file, around 104 MB. No installer needed. It lives in any folder you choose.</p>
         </div>
 
         <div class="step">
@@ -523,7 +594,7 @@
         <h2>Grab the latest build.</h2>
         <p>Auto Listing Bot v1.0.0 for Windows 10 and 11. Portable single-file executable. Activate with a key from WhatsApp.</p>
         <div class="download-actions">
-          <a href="#" class="btn btn-primary" id="dl">
+          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.0.0/Auto.Listing.Bot.1.0.0.exe" class="btn btn-primary" id="dl">
             ⬇ Download Auto Listing Bot.exe
             <span class="arrow">→</span>
           </a>
@@ -533,7 +604,7 @@
         </div>
         <div class="system-info">
           <span>WINDOWS 10 / 11 · X64</span>
-          <span>SIZE <span style="color:var(--ink)">103 MB</span></span>
+          <span>SIZE <span style="color:var(--ink)">104 MB</span></span>
           <span>V1.0.0 · JUN 2026</span>
         </div>
       </div>
