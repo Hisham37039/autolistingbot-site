@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Auto Listing Bot — Marketplace listings on autopilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06080a;
+    --bg-2:#0c1015;
+    --panel:#0f1419;
+    --ink:#e6edf3;
+    --muted:#7d8a95;
+    --line:rgba(255,255,255,0.06);
+    --line-strong:rgba(255,255,255,0.12);
+    --accent:#7CFF6B;          /* signal green */
+    --accent-glow:rgba(124,255,107,0.18);
+    --whatsapp:#25D366;
+    --warn:#FFB454;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--accent);color:#000}
+
+  /* ─── Scan-line atmosphere ─── */
+  body::before{
+    content:"";
+    position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,0.012) 0,rgba(255,255,255,0.012) 1px,transparent 1px,transparent 3px);
+    mix-blend-mode:overlay;
+  }
+  body::after{
+    content:"";
+    position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:radial-gradient(ellipse at 50% -10%,var(--accent-glow),transparent 55%);
+    opacity:.7;
+  }
+
+  /* ─── Top status bar ─── */
+  .status{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 24px;
+    background:rgba(6,8,10,0.85);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+  .status-left{display:flex;align-items:center;gap:18px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .status-right{display:flex;gap:18px}
+  .status-right span{color:var(--ink)}
+
+  /* ─── Layout ─── */
+  main{padding-top:46px;position:relative;z-index:2}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+
+  /* ─── Hero ─── */
+  .hero{padding:80px 0 60px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:start}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:10px;margin-bottom:28px;
+    padding:6px 12px;border:1px solid var(--accent);border-radius:2px;background:rgba(124,255,107,0.04);
+  }
+  h1{
+    font-size:clamp(48px,7vw,92px);line-height:.95;font-weight:700;letter-spacing:-.03em;
+    margin-bottom:24px;
+  }
+  h1 .fade{color:var(--muted);font-weight:400}
+  h1 .underline{
+    position:relative;display:inline-block;
+  }
+  h1 .underline::after{
+    content:"";position:absolute;left:0;right:0;bottom:6px;height:14px;
+    background:var(--accent);opacity:.22;z-index:-1;
+  }
+  .lede{font-size:18px;color:var(--muted);max-width:520px;line-height:1.55;margin-bottom:36px}
+  .cta-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:16px 26px;border-radius:4px;font-weight:600;font-size:15px;
+    font-family:'Space Grotesk',sans-serif;cursor:pointer;border:none;
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .btn-primary{
+    background:var(--accent);color:#000;
+    box-shadow:0 0 0 1px var(--accent),0 8px 24px -8px var(--accent);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--accent),0 14px 36px -10px var(--accent)}
+  .btn-ghost{
+    background:transparent;color:var(--ink);border:1px solid var(--line-strong);
+  }
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .arrow{transition:transform .2s ease}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  .hero-meta{
+    margin-top:36px;display:flex;gap:32px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+  .hero-meta strong{color:var(--ink);font-weight:500;display:block;margin-top:4px;font-size:13px}
+
+  /* ─── Hero terminal preview ─── */
+  .terminal{
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:8px;
+    overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:13px;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,0.8),0 0 0 1px var(--line);
+  }
+  .terminal-bar{
+    background:#080b0e;padding:10px 14px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:8px;
+  }
+  .tdot{width:11px;height:11px;border-radius:50%}
+  .tdot.r{background:#ff5f57}.tdot.y{background:#febc2e}.tdot.g{background:#28c840}
+  .terminal-title{margin-left:auto;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  .terminal-body{padding:20px;line-height:1.85;color:#9aa5b1}
+  .terminal-body .prompt{color:var(--accent)}
+  .terminal-body .ok{color:var(--accent)}
+  .terminal-body .arrow-line{color:var(--ink)}
+  .terminal-body .dim{color:#5a6470}
+  .cursor{display:inline-block;width:8px;height:14px;background:var(--accent);margin-left:4px;vertical-align:middle;animation:blink 1s steps(2) infinite}
+  @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+  /* ─── Section pattern ─── */
+  section{padding:90px 0;position:relative}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:40px;flex-wrap:wrap}
+  .section-tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);
+    letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;
+  }
+  .section-head h2{font-size:clamp(34px,4.2vw,52px);line-height:1;letter-spacing:-.02em;max-width:680px}
+  .section-head .desc{color:var(--muted);max-width:340px;line-height:1.5;font-size:15px}
+
+  /* ─── Features grid ─── */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .feature{
+    background:var(--bg-2);padding:36px 30px;position:relative;
+    transition:background .2s ease;
+  }
+  .feature:hover{background:#11171d}
+  .feature:hover .feature-mark{color:var(--accent)}
+  .feature-mark{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.12em;margin-bottom:24px;display:block;transition:color .2s ease;
+  }
+  .feature h3{font-size:20px;font-weight:600;margin-bottom:12px;letter-spacing:-.01em}
+  .feature p{color:var(--muted);font-size:14px;line-height:1.6}
+  .feature-icon{
+    width:36px;height:36px;border:1px solid var(--line-strong);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;margin-bottom:24px;
+    font-size:18px;
+  }
+
+  /* ─── Screenshots ─── */
+  .shots{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
+  .shot{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    overflow:hidden;position:relative;
+  }
+  .shot-head{
+    padding:12px 16px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+  .shot-head .dot-s{width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent)}
+  .shot-body{aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0a0d11 0%,#0f1419 100%);position:relative;overflow:hidden}
+  .shot-tall .shot-body{aspect-ratio:auto;height:100%;min-height:420px}
+
+  /* Mock dashboard inside shot 1 */
+  .mock-dash{padding:24px;width:100%;height:100%;display:flex;flex-direction:column;gap:14px}
+  .mock-topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:linear-gradient(90deg,#1877F2,#0a5cc4);border-radius:6px;color:#fff;font-size:12px;font-weight:600}
+  .mock-pill{padding:3px 8px;background:rgba(255,255,255,.2);border-radius:3px;font-size:10px;font-weight:500}
+  .mock-license{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#11171d;border:1px solid var(--line);border-radius:6px;font-size:11px}
+  .mock-license .ok-tag{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 6px;border:1px solid var(--accent);border-radius:3px}
+  .mock-progress{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:8px}
+  .mock-progress div{height:100%;width:78%;background:var(--accent)}
+  .mock-tabs{display:flex;gap:6px;font-size:11px}
+  .mock-tab{padding:8px 12px;background:#11171d;border:1px solid var(--line);border-radius:4px;color:var(--muted)}
+  .mock-tab.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+  .mock-card{padding:14px;background:#11171d;border:1px solid var(--line);border-radius:6px;flex:1;display:flex;flex-direction:column;gap:8px}
+  .mock-row{height:8px;background:var(--line);border-radius:2px}
+  .mock-row.short{width:60%}
+  .mock-row.shorter{width:40%}
+
+  /* Mock license screen for shot 2 */
+  .mock-license-screen{padding:28px;width:100%;height:100%;background:linear-gradient(135deg,#1877F2 0%,#0f5fcf 50%,#0a3d9e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+  .mock-robot{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:32px}
+  .mock-title{color:#fff;font-weight:800;font-size:20px}
+  .mock-subtitle{color:rgba(255,255,255,.8);font-size:11px;margin-top:-8px}
+  .mock-box{background:#fff;border-radius:10px;padding:18px;width:100%;max-width:280px;display:flex;flex-direction:column;gap:10px}
+  .mock-label{color:#222;font-weight:600;text-align:center;font-size:13px}
+  .mock-input{background:#f5f5f5;border-radius:6px;padding:10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#999;letter-spacing:.1em}
+  .mock-btn{background:#1877F2;color:#fff;padding:10px;border-radius:6px;text-align:center;font-weight:600;font-size:12px}
+  .mock-plans{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:280px}
+  .mock-plan{background:rgba(255,255,255,.95);padding:8px;border-radius:6px;text-align:center;font-size:10px;color:#333}
+  .mock-plan b{display:block;font-size:11px}
+
+  /* ─── How it works ─── */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative}
+  .step{position:relative}
+  .step-num{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);
+    letter-spacing:.12em;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line-strong);
+  }
+  .step h4{font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+  .step p{color:var(--muted);font-size:14px;line-height:1.55}
+
+  /* ─── Download CTA ─── */
+  .download{
+    padding:80px 60px;
+    background:linear-gradient(135deg,var(--bg-2) 0%,#0a0e12 100%);
+    border:1px solid var(--line-strong);
+    border-radius:12px;position:relative;overflow:hidden;
+    text-align:center;
+  }
+  .download::before{
+    content:"";position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+    width:600px;height:600px;border-radius:50%;
+    background:radial-gradient(circle,var(--accent-glow),transparent 60%);
+    pointer-events:none;
+  }
+  .download h2{font-size:clamp(32px,4vw,46px);margin-bottom:14px;letter-spacing:-.02em;position:relative;z-index:2}
+  .download p{color:var(--muted);max-width:520px;margin:0 auto 36px;line-height:1.6;position:relative;z-index:2}
+  .download-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
+  .btn-whatsapp{background:var(--whatsapp);color:#fff;box-shadow:0 0 0 1px var(--whatsapp),0 8px 24px -8px var(--whatsapp)}
+  .btn-whatsapp:hover{transform:translateY(-2px)}
+  .system-info{
+    margin-top:36px;display:flex;justify-content:center;gap:32px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.08em;text-transform:uppercase;position:relative;z-index:2;
+  }
+
+  /* ─── Footer ─── */
+  footer{padding:60px 0 40px;border-top:1px solid var(--line);margin-top:60px}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+  .foot-brand{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .foot-brand span{color:var(--accent)}
+  .foot-links{display:flex;gap:24px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+  .foot-links a:hover{color:var(--accent)}
+  .foot-legal{color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;margin-top:24px;text-align:center;line-height:1.6;max-width:680px;margin-left:auto;margin-right:auto}
+
+  /* ─── Responsive ─── */
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr;gap:50px}
+    .features{grid-template-columns:1fr}
+    .shots{grid-template-columns:1fr}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .status{padding:10px 16px;font-size:10px}
+    .status-right{display:none}
+    .wrap{padding:0 20px}
+    .download{padding:50px 24px}
+    .system-info{flex-direction:column;gap:10px}
+  }
+  @media (max-width:560px){
+    .steps{grid-template-columns:1fr}
+    .hero{padding:60px 0 40px}
+    section{padding:60px 0}
+    h1{font-size:48px}
+    .cta-row{flex-direction:column;align-items:stretch}
+    .btn{justify-content:center}
+    .hero-meta{flex-wrap:wrap;gap:20px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,::before,::after{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<!-- Top status bar -->
+<div class="status" role="banner" aria-label="Site status">
+  <div class="status-left">
+    <span class="dot" aria-hidden="true"></span>
+    <span>SYSTEM ONLINE · v1.0.0</span>
+  </div>
+  <div class="status-right">
+    <span>WINDOWS X64</span>
+    <span>SIZE <span>103 MB</span></span>
+    <span>UPDATED <span id="date">JUN 2026</span></span>
+  </div>
+</div>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">● Marketplace Automation · Desktop App</div>
+          <h1>
+            Post listings <span class="underline">while you sleep</span>.<br/>
+            <span class="fade">Skip the copy-paste grind.</span>
+          </h1>
+          <p class="lede">Auto Listing Bot runs on your Windows PC, pushes listings to Facebook Marketplace across multiple cities and accounts, and handles the repetitive setup so you can focus on selling.</p>
+          <div class="cta-row">
+            <a href="#download" class="btn btn-primary">
+              Download for Windows
+              <span class="arrow">→</span>
+            </a>
+            <a href="#how" class="btn btn-ghost">See how it works</a>
+          </div>
+
+          <div class="hero-meta">
+            <div>License model<strong>Demo · Silver · Gold · Platinum</strong></div>
+            <div>Get a key<strong>WhatsApp 0325 5444103</strong></div>
+            <div>Platform<strong>Windows 10 / 11 · x64</strong></div>
+          </div>
+        </div>
+
+        <!-- Terminal preview -->
+        <div class="terminal" aria-hidden="true">
+          <div class="terminal-bar">
+            <span class="tdot r"></span>
+            <span class="tdot y"></span>
+            <span class="tdot g"></span>
+            <span class="terminal-title">auto-listing-bot · run</span>
+          </div>
+          <div class="terminal-body">
+            <div><span class="prompt">$</span> launch auto-listing-bot.exe</div>
+            <div class="dim">→ verifying license key...</div>
+            <div><span class="ok">✓</span> FBBOT-2024-GOLD-7X9K <span class="dim">· Gold · 24d</span></div>
+            <div class="dim">→ loading 3 datasets...</div>
+            <div class="dim">→ opening 5 tabs in parallel...</div>
+            <div><span class="ok">✓</span> Tab 01 → posted “iPhone 14 Pro” · Chicago</div>
+            <div><span class="ok">✓</span> Tab 02 → posted “MacBook Air M2” · NYC</div>
+            <div><span class="ok">✓</span> Tab 03 → posted “Sony A7 III” · Miami</div>
+            <div class="dim">→ rotating city · waiting 12s...</div>
+            <div><span class="arrow-line">▸</span> Live log streaming<span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">// What it does</div>
+          <h2>Everything you need to scale Marketplace listings.</h2>
+        </div>
+        <div class="desc">Built for resellers who post the same listing across many cities and accounts, every single day.</div>
+      </div>
+
+      <div class="features">
+
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-mark">// 01 — Parallel</div>
+          <h3>Parallel tabs</h3>
+          <p>Run 1 to 500 browser tabs at once with configurable min/max delays. Saturate or stay quiet — your call.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🗂</div>
+          <div class="feature-mark">// 02 — Listings</div>
+          <h3>Reusable datasets</h3>
+          <p>Build a listing once with title, description, photos, price range, delivery options — then deploy it anywhere.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">📍</div>
+          <div class="feature-mark">// 03 — Locations</div>
+          <h3>Unlimited cities</h3>
+          <p>Rotate through unlimited locations per listing. Add a hundred US cities or just your local five.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🔑</div>
+          <div class="feature-mark">// 04 — Licensing</div>
+          <h3>Per-key plans</h3>
+          <p>Demo, Silver, Gold, Platinum tiers. Time-limited keys you get from us on WhatsApp — no signup flow to fight.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🖼</div>
+          <div class="feature-mark">// 05 — Photos</div>
+          <h3>Random photo order</h3>
+          <p>Upload unlimited photos per listing. Shuffle or sequential — useful for keeping listings looking fresh.</p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🛡</div>
+          <div class="feature-mark">// 06 — Built-in</div>
+          <h3>Self-contained .exe</h3>
+          <p>Portable Windows build. No installer, no Python, no setup. Double-click and go.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <section id="screenshots">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">// Inside the app</div>
+          <h2>A control panel built for one job, done well.</h2>
+        </div>
+        <div class="desc">Login screen, dataset builder, location lists, photo uploads, parallel tab scheduler — all in one window.</div>
+      </div>
+
+      <div class="shots">
+
+        <!-- Dashboard mock -->
+        <div class="shot">
+          <div class="shot-head"><span class="dot-s"></span><span>SCREEN 01 · DATA CENTER</span></div>
+          <div class="shot-body">
+            <div class="mock-dash">
+              <div class="mock-topbar">
+                <span>📘 Auto Listing Bot</span>
+                <span><span class="mock-pill">USA</span> <span class="mock-pill">IDLE</span></span>
+              </div>
+              <div class="mock-license">
+                <span>🛡</span>
+                <span class="ok-tag">ACTIVE</span>
+                <span style="color:#FFB454;font-weight:600">Gold</span>
+                <span style="color:var(--muted)">· 1 Month</span>
+                <span style="color:var(--muted);margin-left:auto">24 days remaining</span>
+              </div>
+              <div class="mock-progress"><div></div></div>
+              <div class="mock-tabs">
+                <span class="mock-tab active">Data Center</span>
+                <span class="mock-tab">Automation</span>
+                <span class="mock-tab">Accounts</span>
+                <span class="mock-tab">Live Log</span>
+              </div>
+              <div class="mock-card">
+                <div class="mock-row"></div>
+                <div class="mock-row short"></div>
+                <div class="mock-row"></div>
+                <div class="mock-row shorter"></div>
+                <div class="mock-row short"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- License screen mock -->
+        <div class="shot shot-tall">
+          <div class="shot-head"><span class="dot-s"></span><span>SCREEN 02 · LICENSE</span></div>
+          <div class="shot-body">
+            <div class="mock-license-screen">
+              <div class="mock-robot">🤖</div>
+              <div class="mock-title">Auto Listing</div>
+              <div class="mock-subtitle">Auto Listing Bot</div>
+              <div class="mock-box">
+                <div class="mock-label">Enter License Key</div>
+                <div class="mock-input">FBBOT-XXXX-XXXX-XXXX</div>
+                <div class="mock-btn">🔒 Activate Bot</div>
+              </div>
+              <div class="mock-plans">
+                <div class="mock-plan"><b>🎟 Demo</b>12h + proxy</div>
+                <div class="mock-plan"><b>🥈 Silver</b>1 mo, no proxy</div>
+                <div class="mock-plan"><b>🥇 Gold</b>1 mo + proxy</div>
+                <div class="mock-plan"><b>🏆 Platinum</b>3 mo + proxy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">// Getting started</div>
+          <h2>Four steps from zero to first listing.</h2>
+        </div>
+        <div class="desc">No installer, no signup, no credit card form. Just a key from us and a download.</div>
+      </div>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">STEP 01</div>
+          <h4>Download the .exe</h4>
+          <p>One file, around 103 MB. No installer needed. It lives in any folder you choose.</p>
+        </div>
+
+        <div class="step">
+          <div class="step-num">STEP 02</div>
+          <h4>Message us on WhatsApp</h4>
+          <p>Send a quick message at 0325 5444103. We send you back a license key for the plan you choose.</p>
+        </div>
+
+        <div class="step">
+          <div class="step-num">STEP 03</div>
+          <h4>Paste the key</h4>
+          <p>Open the bot, paste the key, click Activate. The dashboard unlocks for the length of your plan.</p>
+        </div>
+
+        <div class="step">
+          <div class="step-num">STEP 04</div>
+          <h4>Build a dataset · run</h4>
+          <p>Add title, photos, price, cities. Set how many parallel tabs to run. Press Run Now. Watch the log.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD CTA -->
+  <section id="download">
+    <div class="wrap">
+      <div class="download">
+        <h2>Grab the latest build.</h2>
+        <p>Auto Listing Bot v1.0.0 for Windows 10 and 11. Portable single-file executable. Activate with a key from WhatsApp.</p>
+        <div class="download-actions">
+          <a href="#" class="btn btn-primary" id="dl">
+            ⬇ Download Auto Listing Bot.exe
+            <span class="arrow">→</span>
+          </a>
+          <a href="https://wa.me/923255444103" target="_blank" rel="noopener" class="btn btn-whatsapp">
+            ✱ Get a license key on WhatsApp
+          </a>
+        </div>
+        <div class="system-info">
+          <span>WINDOWS 10 / 11 · X64</span>
+          <span>SIZE <span style="color:var(--ink)">103 MB</span></span>
+          <span>V1.0.0 · JUN 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand"><span>●</span> AUTO LISTING BOT</div>
+      <div class="foot-links">
+        <a href="#features">Features</a>
+        <a href="#screenshots">Screens</a>
+        <a href="#how">How it works</a>
+        <a href="https://wa.me/923255444103" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      Auto Listing Bot is independent software and is not affiliated with, endorsed by, or sponsored by Meta Platforms Inc. or Facebook.<br/>
+      Users are responsible for complying with the Terms of Service of any platforms they automate. Use at your own discretion.
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const id=a.getAttribute('href');
+      if(id.length>1){
+        const el=document.querySelector(id);
+        if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});}
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
