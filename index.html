@@ -335,8 +335,8 @@
   </div>
   <div class="status-right">
     <span>WINDOWS X64</span>
-    <span>SIZE <b>300 MB</b></span>
-    <span>UPDATED <b id="date">JUN 2026</b></span>
+    <span>SIZE <b>126 MB</b></span>
+    <span>UPDATED <b id="date">JUL 2026</b></span>
   </div>
 </div>
 
@@ -353,7 +353,7 @@
           <div class="cta-row">
             <a href="#download" class="btn btn-primary">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download for Windows
+              Download Setup (.exe)
               <span class="arrow">→</span>
             </a>
             <a href="#how" class="btn btn-ghost">See how it works</a>
@@ -443,8 +443,8 @@
 
         <div class="feature">
           <div class="ficon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <h3>Self-contained .exe</h3>
-          <p>Portable Windows build. No installer, no Python, no setup. Double-click and go.</p>
+          <h3>Windows Installer Setup</h3>
+          <p>Standard Windows installer package. Simple click-to-install setup that sets execution paths correctly on your system.</p>
         </div>
 
       </div>
@@ -534,15 +534,15 @@
           <div class="section-tag">Getting started</div>
           <h2>Four steps from zero to first listing.</h2>
         </div>
-        <div class="desc">No installer, no signup, no credit card form. Just a key from us and a download.</div>
+        <div class="desc">No complex setups, no signup, no credit card form. Just a key from us and a download.</div>
       </div>
 
       <div class="steps">
 
         <div class="step">
           <div class="step-num">STEP 01</div>
-          <h4>Download the .exe</h4>
-          <p>One ZIP file, around 300 MB. Extract it, open the folder, and run Auto Listing Bot.exe — no installer needed.</p>
+          <h4>Download & Run Setup</h4>
+          <p>Download the installer, around 126 MB. Run the executable setup to install Auto Listing Bot on your PC instantly.</p>
         </div>
 
         <div class="step">
@@ -572,11 +572,11 @@
     <div class="wrap">
       <div class="download">
         <h2>Grab the latest build.</h2>
-        <p>Auto Listing Bot v1.1.0 for Windows 10 and 11. Portable single-file executable. Activate with a key from WhatsApp.</p>
+        <p>Auto Listing Bot Setup v1.1.0 for Windows 10 and 11. Standard single-file executable setup. Activate with a key from WhatsApp.</p>
         <div class="download-actions">
-          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.0/win-unpacked.zip" class="btn btn-primary" id="dl">
+          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.0/Auto-Listing-Bot-Setup-1.1.0.exe" class="btn btn-primary" id="dl">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Auto Listing Bot.exe
+            Download Auto Listing Bot Setup.exe
             <span class="arrow">→</span>
           </a>
           <a href="https://wa.me/923255444103" target="_blank" rel="noopener" class="btn btn-whatsapp">
@@ -586,8 +586,8 @@
         </div>
         <div class="system-info">
           <span>WINDOWS 10 / 11 · X64</span>
-          <span>SIZE <b>300 MB</b></span>
-          <span>v1.1.0 · JUN 2026</span>
+          <span>SIZE <b>126 MB</b></span>
+          <span>v1.1.0 · JUL 2026</span>
         </div>
       </div>
     </div>
@@ -618,28 +618,14 @@
   document.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click',e=>{
       const id=a.getAttribute('href');
-      if(id.length>1){
-        const el=document.querySelector(id);
-        if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});}
+      if(id && id.startsWith('#')){
+        e.preventDefault();
+        const target=document.querySelector(id);
+        if(target) target.scrollIntoView({behavior:'smooth'});
       }
     });
   });
 </script>
-
-<!-- Floating WhatsApp button -->
-<a href="https://wa.me/923255444103" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"
-   style="position:fixed;bottom:24px;right:24px;z-index:999;
-          width:56px;height:56px;border-radius:50%;
-          background:#25D366;
-          display:flex;align-items:center;justify-content:center;
-          box-shadow:0 4px 20px rgba(37,211,102,0.5);
-          transition:transform .2s ease,box-shadow .2s ease;"
-   onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 28px rgba(37,211,102,0.7)'"
-   onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 20px rgba(37,211,102,0.5)'">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
-  </svg>
-</a>
 
 </body>
 </html>
