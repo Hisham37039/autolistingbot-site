@@ -246,7 +246,7 @@
   .mock-title{color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;letter-spacing:-.01em}
   .mock-subtitle{color:rgba(255,255,255,.75);font-size:11px;margin-top:-8px}
   .mock-box{background:#fff;border-radius:12px;padding:20px;width:100%;max-width:290px;display:flex;flex-direction:column;gap:10px;box-shadow:0 14px 34px -14px rgba(0,0,0,.45)}
-  .mock-label{color:#16202E;font-weight:600;text-align:center;font-size:13.5px}
+  .mock-plan.mock-label{color:#16202E;font-weight:600;text-align:center;font-size:13.5px}
   .mock-input{background:#F3F5F9;border:1px solid #E4E8EF;border-radius:8px;padding:11px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#9AA3B2;letter-spacing:.1em}
   .mock-btn{background:var(--accent-deep);color:#fff;padding:11px;border-radius:8px;text-align:center;font-weight:600;font-size:12.5px}
   .mock-plans{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%;max-width:290px}
@@ -331,7 +331,7 @@
 <div class="status" role="banner" aria-label="Site status">
   <div class="status-left">
     <span class="dot" aria-hidden="true"></span>
-    <span>SYSTEM ONLINE · v1.1.0</span>
+    <span>SYSTEM ONLINE · v1.1.1</span>
   </div>
   <div class="status-right">
     <span>WINDOWS X64</span>
@@ -572,9 +572,9 @@
     <div class="wrap">
       <div class="download">
         <h2>Grab the latest build.</h2>
-        <p>Auto Listing Bot Setup v1.1.0 for Windows 10 and 11. Standard single-file executable setup. Activate with a key from WhatsApp.</p>
+        <p>Auto Listing Bot Setup v1.1.1 for Windows 10 and 11. Standard single-file executable setup. Activate with a key from WhatsApp.</p>
         <div class="download-actions">
-          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.0/Auto-Listing-Bot-Setup-1.1.0.exe" class="btn btn-primary" id="dl">
+          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.1/Auto-Listing-Bot-Setup-1.1.1.exe" class="btn btn-primary" id="dl">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download Auto Listing Bot Setup.exe
             <span class="arrow">→</span>
@@ -587,7 +587,7 @@
         <div class="system-info">
           <span>WINDOWS 10 / 11 · X64</span>
           <span>SIZE <b>126 MB</b></span>
-          <span>v1.1.0 · JUL 2026</span>
+          <span>v1.1.1 · JUL 2026</span>
         </div>
       </div>
     </div>
@@ -615,17 +615,4 @@
 
 <script>
   // Smooth scroll
-  document.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener('click',e=>{
-      const id=a.getAttribute('href');
-      if(id && id.startsWith('#')){
-        e.preventDefault();
-        const target=document.querySelector(id);
-        if(target) target.scrollIntoView({behavior:'smooth'});
-      }
-    });
-  });
-</script>
-
-</body>
-</html>
+  document.querySelectorAll('a[href^="
