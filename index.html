@@ -147,6 +147,8 @@
     background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;
     overflow:hidden;
     box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 0 1px rgba(148,163,198,.06),0 0 80px -30px var(--accent-glow);
+    transition:transform .4s cubic-bezier(.22,1,.36,1);
+    will-change:transform;
   }
   .console-bar{
     background:#0A101E;padding:12px 16px;border-bottom:1px solid var(--line);
@@ -207,8 +209,8 @@
   .section-head .desc{color:var(--muted);max-width:340px;line-height:1.6;font-size:14.5px}
   /* ─── Features ─── */
   .features{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .feature{background:var(--bg-2);padding:34px 30px;transition:background .2s ease}
-  .feature:hover{background:var(--panel-2)}
+  .feature{background:var(--bg-2);padding:34px 30px;transition:background .2s ease,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease;will-change:transform}
+  .feature:hover{background:var(--panel-2);box-shadow:0 20px 44px -22px rgba(0,0,0,.6)}
   .feature:hover .ficon{border-color:rgba(77,157,255,.5);color:var(--accent)}
   .ficon{
     width:40px;height:40px;border:1px solid var(--line-strong);border-radius:9px;
@@ -219,7 +221,8 @@
   .feature p{color:var(--muted);font-size:14px;line-height:1.65}
   /* ─── Screens ─── */
   .shots{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
-  .shot{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .shot{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease;will-change:transform}
+  .shot:hover{box-shadow:0 24px 50px -24px rgba(0,0,0,.65)}
   .shot-head{
     padding:13px 16px;border-bottom:1px solid var(--line);
     display:flex;align-items:center;gap:10px;
@@ -236,13 +239,18 @@
     border-radius:8px;color:#fff;font-size:12px;font-weight:600;letter-spacing:.01em;
   }
   .mock-pill{padding:3px 9px;background:rgba(255,255,255,.18);border-radius:4px;font-size:10px;font-weight:500;font-family:'JetBrains Mono',monospace}
-  .mock-license{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;font-size:11px}
-  .ok-tag{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:2px 7px;border:1px solid rgba(77,157,255,.45);border-radius:4px;letter-spacing:.06em}
-  .mock-progress{height:4px;background:rgba(148,163,198,.12);border-radius:2px;overflow:hidden}
-  .mock-progress i{display:block;height:100%;width:78%;background:linear-gradient(90deg,var(--accent-deep),var(--accent))}
+  .mock-status-bar{padding:8px 12px;border-radius:6px;background:var(--accent-glow);color:var(--accent);font-size:10.5px;font-weight:500}
+  .mock-tabs-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
   .mock-tabs{display:flex;gap:6px;font-size:11px;flex-wrap:wrap}
   .mock-tab{padding:8px 13px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--muted)}
   .mock-tab.active{background:var(--accent);color:#04070D;border-color:var(--accent);font-weight:600}
+  .mock-row-flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .mock-chip{
+    padding:6px 12px;border-radius:100px;font-size:10.5px;font-weight:600;
+    background:var(--panel-2);border:1px solid var(--line-strong);color:var(--muted);
+  }
+  .mock-chip-solid{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff}
+  .mock-card-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
   .mock-card{padding:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;flex:1;display:flex;flex-direction:column;gap:9px}
   .mock-row{height:8px;background:rgba(148,163,198,.14);border-radius:3px}
   .mock-row.short{width:60%}
@@ -340,7 +348,7 @@
 <div class="status" role="banner" aria-label="Site status">
   <div class="status-left">
     <span class="dot" aria-hidden="true"></span>
-    <span>SYSTEM ONLINE · v1.1.4</span>
+    <span>SYSTEM ONLINE · v1.1.5</span>
   </div>
   <div class="status-right">
     <span>WINDOWS X64</span>
@@ -348,7 +356,6 @@
     <span>UPDATED <b id="date">JUL 2026</b></span>
   </div>
 </div>
-
 <!-- Social rail: YouTube + WhatsApp, official brand colors -->
 <nav class="social-rail" aria-label="Social links">
   <a class="yt" href="https://www.youtube.com/@AutolistingBot" target="_blank" rel="noopener" aria-label="Watch our tutorials on YouTube" title="YouTube">
@@ -358,7 +365,6 @@
     <svg viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="12" fill="#25D366"/><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" fill="#fff"/></svg>
   </a>
 </nav>
-
 <main>
   <!-- HERO -->
   <section class="hero">
@@ -369,7 +375,7 @@
           <h1>Post listings <span class="accent">while you rest.</span></h1>
           <p class="lede">Auto Listing Bot runs on your Windows PC, pushes listings to Facebook Marketplace across multiple cities and accounts, and handles the repetitive setup so you can focus on selling.</p>
           <div class="cta-row">
-            <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.4/Auto.Listing.Bot.Setup.1.1.4.exe" class="btn btn-primary">
+            <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.5/Auto.Listing.Bot.Setup.1.1.5.exe" class="btn btn-primary">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download Setup (.exe)
               <span class="arrow">→</span>
@@ -475,27 +481,24 @@
             <div class="mock-dash">
               <div class="mock-topbar">
                 <span>Auto Listing Bot</span>
-                <span><span class="mock-pill">USA</span> <span class="mock-pill">IDLE</span></span>
+                <span><span class="mock-pill">👥 2</span> <span class="mock-pill">🗂️ 3</span> <span class="mock-pill">IDLE</span></span>
               </div>
-              <div class="mock-license">
-                <span class="ok-tag">ACTIVE</span>
-                <span style="color:var(--accent);font-weight:600">Platinum</span>
-                <span style="color:var(--muted)">· 3 Months</span>
-                <span style="color:var(--muted);margin-left:auto">62 days remaining</span>
+              <div class="mock-status-bar">Ready. Set up your Data and Accounts, then press Run.</div>
+              <div class="mock-tabs-row">
+                <div class="mock-tabs">
+                  <span class="mock-tab active">🏠 Dashboard</span>
+                  <span class="mock-tab">🌐 Proxy &amp; Log</span>
+                </div>
+                <span class="mock-chip mock-chip-solid">🗂️ Data Center</span>
               </div>
-              <div class="mock-progress"><i></i></div>
-              <div class="mock-tabs">
-                <span class="mock-tab active">Data Center</span>
-                <span class="mock-tab">Automation Type</span>
-                <span class="mock-tab">Accounts &amp; Cookies</span>
-                <span class="mock-tab">Proxy &amp; Log</span>
+              <div class="mock-row-flex">
+                <span class="mock-chip mock-chip-solid">🆕 New Account Listing ▾ change</span>
               </div>
               <div class="mock-card">
+                <div class="mock-card-label">Accounts &amp; Cookies</div>
                 <div class="mock-row"></div>
                 <div class="mock-row short"></div>
                 <div class="mock-row"></div>
-                <div class="mock-row shorter"></div>
-                <div class="mock-row short"></div>
               </div>
             </div>
           </div>
@@ -566,9 +569,9 @@
     <div class="wrap">
       <div class="download">
         <h2>Grab the latest build.</h2>
-        <p>Auto Listing Bot Setup v1.1.4 for Windows 10 and 11. Standard single-file executable setup. Activate with a key from WhatsApp.</p>
+        <p>Auto Listing Bot Setup v1.1.5 for Windows 10 and 11. Standard single-file executable setup. Activate with a key from WhatsApp.</p>
         <div class="download-actions">
-          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.4/Auto.Listing.Bot.Setup.1.1.4.exe" class="btn btn-primary" id="dl">
+          <a href="https://github.com/Hisham37039/autolistingbot-site/releases/download/v1.1.5/Auto.Listing.Bot.Setup.1.1.5.exe" class="btn btn-primary" id="dl">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download Auto Listing Bot Setup.exe
             <span class="arrow">→</span>
@@ -581,7 +584,7 @@
         <div class="system-info">
           <span>WINDOWS 10 / 11 · X64</span>
           <span>SIZE <b>126 MB</b></span>
-          <span>v1.1.4 · JUL 2026</span>
+          <span>v1.1.5 · JUL 2026</span>
         </div>
       </div>
     </div>
@@ -605,5 +608,49 @@
     </div>
   </div>
 </footer>
+<script>
+  // 3D tilt — real mouse-position tracking (not a fixed hover angle),
+  // applied to the feature cards, the hero console, and the screenshot
+  // mockups. Skipped entirely when the user has requested reduced
+  // motion, matching the existing CSS media query's intent rather than
+  // just disabling the transition and still moving the element.
+  (function () {
+    var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    var MAX_DEG = 7;          // subtle — this is depth, not a rollercoaster
+    var PERSPECTIVE = 900;
+    var LIFT = 6;              // px of translateZ on hover, reinforces depth
+
+    function attachTilt(el) {
+      var raf = null;
+      function onMove(e) {
+        var rect = el.getBoundingClientRect();
+        var px = (e.clientX - rect.left) / rect.width;   // 0..1 across the card
+        var py = (e.clientY - rect.top) / rect.height;    // 0..1 down the card
+        var rotY = (px - 0.5) * (MAX_DEG * 2);
+        var rotX = (0.5 - py) * (MAX_DEG * 2);
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+          el.style.transition = 'none'; // instant tracking while the mouse is moving
+          el.style.transform =
+            'perspective(' + PERSPECTIVE + 'px) ' +
+            'rotateX(' + rotX.toFixed(2) + 'deg) ' +
+            'rotateY(' + rotY.toFixed(2) + 'deg) ' +
+            'translateZ(' + LIFT + 'px)';
+        });
+      }
+      function onLeave() {
+        if (raf) cancelAnimationFrame(raf);
+        el.style.transition = ''; // restore the CSS transition for a smooth spring-back
+        el.style.transform = 'perspective(' + PERSPECTIVE + 'px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+      }
+      el.addEventListener('mousemove', onMove);
+      el.addEventListener('mouseleave', onLeave);
+    }
+
+    document.querySelectorAll('.feature, .console, .shot').forEach(attachTilt);
+  })();
+</script>
 </body>
 </html>
